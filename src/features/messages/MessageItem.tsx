@@ -1,0 +1,72 @@
+import React from 'react';
+import type { Message } from '../../types/message';
+import { useLanguage } from '../../context/LanguageContext';
+
+interface MessageItemProps {
+  message: Message;
+  senderName: string;
+  isOwnMessage: boolean;
+  alignRight: boolean;
+  isEditing: boolean;
+  editingText: string;
+  onEditingTextChange: (text: string) => void;
+}
+
+export const MessageItem: React.FC<MessageItemProps> = ({
+  message,
+  senderName,
+  isOwnMessage,
+  alignRight,
+  isEditing,
+  editingText,
+  onEditingTextChange,
+}) => {
+  const { t, language } = useLanguage();
+
+  return (
+    <div className={`flex ${alignRight ? 'justify-end' : 'justify-start'} items-start gap-3`}>
+      <div
+        className={`max-w-[80%] rounded-3xl border px-4 py-3 shadow-sm ${
+          isOwnMessage
+            ? 'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/40'
+            : 'border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-800'
+        }`}
+      >
+        <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-300">
+          {senderName}
+        </div>
+        {isEditing ? (
+          <textarea
+            value={editingText}
+            onChange={(event) => onEditingTextChange(event.target.value)}
+            rows={3}
+            className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-900"
+          />
+        ) : (
+          <>
+            {message.image_url ? (
+              <img
+                src={message.image_url}
+                alt="Client media"
+                className="max-h-80 w-full rounded-xl object-cover"
+              />
+            ) : (
+              <p className="whitespace-pre-wrap text-sm text-gray-900 dark:text-slate-100">
+                {message.message || t('messages.noContent')}
+              </p>
+            )}
+            <div className="mt-3 flex items-center justify-between gap-3 text-xs text-gray-500 dark:text-slate-400">
+              <span>
+                {new Date(message.created_at).toLocaleTimeString(
+                  language === 'ar' ? 'ar-EG' : 'en-US',
+                  { hour: '2-digit', minute: '2-digit' },
+                )}
+              </span>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+

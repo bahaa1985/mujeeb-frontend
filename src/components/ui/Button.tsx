@@ -28,7 +28,7 @@ export const Button: React.FC<ButtonProps> = ({
   const {t} = useLanguage();
 
   return (
-    <div className="w-1/2 flex justify-center">
+    <div className="w-full flex justify-center mx-auto">
       <button
         className={`${baseStyles} ${variantStyles[variant]} ${widthStyle}`}
         disabled={disabled || isLoading}

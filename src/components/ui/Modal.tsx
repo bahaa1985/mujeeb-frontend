@@ -15,10 +15,10 @@ export const Modal: React.FC<ModalProps> = ({
   isOpen,
   title,
   children,
-  onClose,
+  // onClose,
   onConfirm,
   confirmText = "Confirm",
-  cancelText = "Cancel",
+  // cancelText = "Cancel",
 }) => {
   if (!isOpen) return null;
 
@@ -33,9 +33,9 @@ export const Modal: React.FC<ModalProps> = ({
         </h2>
         <div className="mb-6 dark:text-slate-300">{children}</div>
         <div className="flex gap-3 justify-end">
-          <Button variant="secondary" onClick={onClose}>
+          {/* <Button variant="secondary" onClick={onClose}>
             {cancelText}
-          </Button>
+          </Button> */}
           {onConfirm && (
             <Button variant="primary" onClick={onConfirm}>
               {confirmText}

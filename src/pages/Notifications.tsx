@@ -9,6 +9,7 @@ const NotificationsPage: React.FC = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [hiddenNotificationIds, setHiddenNotificationIds] = useState<Set<string>>(new Set());
+  const [visibleSystemErrorIds, setVisibleSystemErrorIds] = useState<Set<string>>(new Set());
   const {
     notifications,
     pagination,
@@ -66,14 +67,21 @@ const NotificationsPage: React.FC = () => {
             </div>
           ) : (
             <ul className="space-y-3">
-              {notifications.map((notification) => (
-                <li
-                  key={notification.id}
-                  onClick={() => handleNotificationClick(notification)}
-                  className={`p-4 rounded-md border border-gray-100 dark:border-slate-800 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors cursor-pointer ${
-                    !notification.is_read ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''
-                  }`}
-                >
+              {notifications.map((notification) => {
+                const notificationId = String(notification.id);
+                const isSystemError = notification.type === 'SYSTEM_ERROR';
+                const isHidden = isSystemError
+                  ? !visibleSystemErrorIds.has(notificationId)
+                  : hiddenNotificationIds.has(notificationId);
+
+                return (
+                  <li
+                    key={notification.id}
+                    onClick={() => handleNotificationClick(notification)}
+                    className={`p-4 rounded-md border border-gray-100 dark:border-slate-800 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors cursor-pointer ${
+                      !notification.is_read ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''
+                    }`}
+                  >
                   <div className="flex justify-between items-start mb-1">
                     <h3 className="text-sm font-semibold text-gray-900 dark:text-slate-100">
                       {notification.title} {[notification.type === 'SYSTEM_ERROR' && notification.data?.error_title]}
@@ -83,7 +91,7 @@ const NotificationsPage: React.FC = () => {
                     </span>
                   </div>
                   <div className="flex items-start justify-between gap-3">
-                    {!hiddenNotificationIds.has(String(notification.id)) && (
+                    {!isHidden && (
                       <p className="text-sm text-gray-600 dark:text-slate-300">
                         {notification.body}
                       </p>
@@ -92,26 +100,38 @@ const NotificationsPage: React.FC = () => {
                       type="button"
                       onClick={(event) => {
                         event.stopPropagation();
-                        const notificationId = String(notification.id);
-                        setHiddenNotificationIds((current) => {
-                          const next = new Set(current);
-                          if (next.has(notificationId)) {
-                            next.delete(notificationId);
-                          } else {
-                            next.add(notificationId);
-                          }
-                          return next;
-                        });
+                        if (isSystemError) {
+                          setVisibleSystemErrorIds((current) => {
+                            const next = new Set(current);
+                            if (next.has(notificationId)) {
+                              next.delete(notificationId);
+                            } else {
+                              next.add(notificationId);
+                            }
+                            return next;
+                          });
+                        } else {
+                          setHiddenNotificationIds((current) => {
+                            const next = new Set(current);
+                            if (next.has(notificationId)) {
+                              next.delete(notificationId);
+                            } else {
+                              next.add(notificationId);
+                            }
+                            return next;
+                          });
+                        }
                       }}
                       className="shrink-0 text-xs text-primary hover:underline"
                     >
-                      {hiddenNotificationIds.has(String(notification.id))
+                      {isHidden
                         ? t('layout.view')
                         : t('layout.hide')}
                     </button>
                   </div>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>

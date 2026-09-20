@@ -21,9 +21,9 @@ export const subscriptionAPI = {
       (item: Subscription) => Number(item.pharmacy_id) === Number(pharmacyId)
     );
 
-    if (!subscription) {
-      throw new Error("Subscription not found");
-    }
+    // if (!subscription) {
+    //   throw new Error("Subscription not found");
+    // }
 
     return subscription;
   },

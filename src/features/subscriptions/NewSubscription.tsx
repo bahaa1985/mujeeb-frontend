@@ -6,13 +6,15 @@ import { useToast } from "../../context/ToastContext";
 import { type Pharmacy } from "../../types/pharmacy";
 import { Button } from "../../components/ui/Button";
 
-export const NewSubscription: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
+export const NewSubscription: React.FC<{ onSuccess: () => void }> = ({
+  onSuccess,
+}) => {
   const { t } = useLanguage();
   const { showToast } = useToast();
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
   const [plans, setPlans] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   const [formData, setFormData] = useState({
     pharmacy_id: "",
     plan_id: "",
@@ -33,7 +35,7 @@ export const NewSubscription: React.FC<{ onSuccess: () => void }> = ({ onSuccess
         setPharmacies(pharmaciesData);
         setPlans(plansData);
       } catch (error) {
-        showToast(t("common.error"),error);
+        showToast(t("common.error"), error);
       } finally {
         setLoading(false);
       }
@@ -51,14 +53,16 @@ export const NewSubscription: React.FC<{ onSuccess: () => void }> = ({ onSuccess
     try {
       await subscriptionAPI.createPharmacySubscription({
         pharmacy_id: formData.pharmacy_id,
-        plan_id: Number(formData.plan_id)
+        plan_id: Number(formData.plan_id),
       });
       showToast(t("common.success"), "success");
       onSuccess();
     } catch (error: any) {
-      const message = error.response?.data?.message === "Pharmacy already has an existing subscription" 
-        ? t("subscriptions.subscriptionExists") 
-        : t("common.error");
+      const message =
+        error.response?.data?.message ===
+        "Pharmacy already has an existing subscription"
+          ? t("subscriptions.subscriptionExists")
+          : t("common.error");
       showToast(message, "error");
     }
   };
@@ -66,47 +70,58 @@ export const NewSubscription: React.FC<{ onSuccess: () => void }> = ({ onSuccess
   if (loading) return null;
 
   return (
-    <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 mb-8">
-      <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-white border-b dark:border-gray-700 pb-2">
+    <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 sm:p-6 mb-8">
+      <h2 className="text-lg sm:text-xl font-bold mb-5 sm:mb-6 text-gray-900 dark:text-white border-b dark:border-gray-700 pb-2">
         {t("subscriptions.assignSubscription")}
       </h2>
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
-        <div>
-          <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-            {t("subscriptions.selectPharmacy")}
-          </label>
-          <select
-            required
-            value={formData.pharmacy_id}
-            onChange={(e) => setFormData({ ...formData, pharmacy_id: e.target.value })}
-            className="w-full border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-2 focus:ring-2 focus:ring-primary outline-none"
-          >
-            <option value="">--</option>
-            {pharmacies.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.pharmacy_name}
-              </option>
-            ))}
-          </select>
-        </div>
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col items-center gap-5 sm:gap-6"
+      >
+        <div className="w-full flex flex-col md:flex-row justify-between gap-5 md:gap-6 items-stretch md:items-center md:mb-2">
+          <div className="w-full sm:w-[45%] flex flex-col sm:flex-row sn:justify-center sm:items-center gap-2 sm:gap-4 md:gap-6">
+            <label className="w-full sm:w-auto shrink-0 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              {t("subscriptions.selectPharmacy")}
+            </label>
+            <select
+              required
+              value={formData.pharmacy_id}
+              onChange={(e) =>
+                setFormData({ ...formData, pharmacy_id: e.target.value })
+              }
+              className="w-full min-w-0 border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-2 focus:ring-2 focus:ring-primary outline-none"
+            >
+              <option value="">--</option>
+              {pharmacies.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.pharmacy_name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-            {t("subscriptions.selectPlan")}
-          </label>
-          <select
-            required
-            value={formData.plan_id}
-            onChange={(e) => setFormData({ ...formData, plan_id: e.target.value })}
-            className="w-full border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-2 focus:ring-2 focus:ring-primary outline-none"
-          >
-            <option value="">--</option>
-            {plans.sort((a,b)=>a.id-b.id).map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name} ({p.price} EGP)
-              </option>
-            ))}
-          </select>
+          <div className="w-full sm:w-[45%] flex flex-col sm:flex-row sn:justify-center sm:items-center gap-2 sm:gap-4 md:gap-6">
+            <label className="w-full sm:w-auto shrink-0 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              {t("subscriptions.selectPlan")}
+            </label>
+            <select
+              required
+              value={formData.plan_id}
+              onChange={(e) =>
+                setFormData({ ...formData, plan_id: e.target.value })
+              }
+              className="w-full min-w-0 border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-2 focus:ring-2 focus:ring-primary outline-none"
+            >
+              <option value="">--</option>
+              {plans
+                .sort((a, b) => a.id - b.id)
+                .map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name} ({p.price} EGP)
+                  </option>
+                ))}
+            </select>
+          </div>
         </div>
 
         <div className="flex gap-6 items-center lg:mb-2">
@@ -131,16 +146,16 @@ export const NewSubscription: React.FC<{ onSuccess: () => void }> = ({ onSuccess
           </label> */}
         </div>
 
-        <div className="lg:col-span-3 flex justify-center">
-          <Button
+        {/* <div className="w-full flex justify-center md:col-start-2 md:row-start-2"> */}
+        <Button
           variant="primary"
           type="submit"
-            // type="submit"
-            // className="bg-primary text-white px-8 py-2.5 rounded-lg hover:opacity-90 transition-all font-bold shadow-sm"
-          >
-            {t("common.create")}
-          </Button>
-        </div>
+          // type="submit"
+          // className="bg-primary text-white px-8 py-2.5 rounded-lg hover:opacity-90 transition-all font-bold shadow-sm"
+        >
+          {t("common.create")}
+        </Button>
+        {/* </div> */}
       </form>
     </div>
   );

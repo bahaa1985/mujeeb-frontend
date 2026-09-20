@@ -17,12 +17,12 @@ export const Navbar: React.FC = () => {
 
     return (
       <nav className="sticky top-0 z-10 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-800 transition-colors duration-300" dir={dir}>
-      <div className={`w-full px-4 sm:px-6 h-16 flex items-center justify-end`}>
+      <div className="w-full min-w-0 px-2 sm:px-6 h-16 flex items-center justify-end">
         {/* <Link to="/dashboard" className={`text-lg sm:text-2xl font-bold bg-gradient-to-r ${theme.shell} bg-clip-text text-transparent`}>
           <img src="/mujeeb-navbar-light.png" width={200} className='h-16 object-contain dark:hidden' alt="Mujeeb" />
           <img src="/mujeeb-navbar-ldark.png" width={200} className='hidden h-16 object-contain dark:block' alt="Mujeeb" />
         </Link> */}
-        <div className={`flex items-center gap-x-4 ${dir === 'rtl' ? 'justify-end' : 'justify-start'}`}>
+        <div className={`min-w-0 flex items-center gap-x-2 sm:gap-x-4 ${dir === 'rtl' ? 'justify-end' : 'justify-start'}`}>
           <button
             type="button"
             onClick={toggleTheme}
@@ -32,16 +32,16 @@ export const Navbar: React.FC = () => {
           >
             {currentTheme === 'light' ? <DarkMode /> : <LightMode />}
           </button>
-          <Link to={`/users/${user?.id}`} className="flex items-center">
-            <span className="text-xs sm:text-sm font-medium text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white bg-gray-50 dark:bg-slate-800 px-3 py-1.5 rounded-full transition-colors">
+          <Link to={`/users/${user?.id}`} className="min-w-0 flex items-center">
+            <span className="max-w-[28vw] truncate text-xs sm:max-w-none sm:text-sm font-medium text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white bg-gray-50 dark:bg-slate-800 px-2 sm:px-3 py-1.5 rounded-full transition-colors">
               {user?.username}
             </span>
           </Link>
 
-          <img src={user?.avatar} className='rounded-full w-10 h-10 m-auto' />
+          <img src={user?.avatar} className='shrink-0 rounded-full w-8 h-8 sm:w-10 sm:h-10 m-auto' />
           <button
             onClick={handleLogout}
-            className={`px-3 py-1.5 sm:px-5 sm:py-2 text-xs sm:text-sm rounded-full transition-all duration-200 ${theme.accent} text-white font-semibold shadow-sm hover:shadow-md active:scale-95`}
+            className={`shrink-0 whitespace-nowrap px-2 sm:px-5 py-1.5 sm:py-2 text-[11px] sm:text-sm rounded-full transition-all duration-200 ${theme.accent} text-white font-semibold shadow-sm hover:shadow-md active:scale-95`}
           >
             {t('common.logout')}
           </button>

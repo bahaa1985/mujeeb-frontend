@@ -15,7 +15,7 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    'py-2 rounded font-medium transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed';
+    'py-2 mx-auto  rounded font-medium transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variantStyles = {
     primary: 'bg-blue-600 text-white hover:bg-blue-700',
@@ -28,12 +28,14 @@ export const Button: React.FC<ButtonProps> = ({
   const {t} = useLanguage();
 
   return (
-    <button
-      className={`${baseStyles} ${variantStyles[variant]} ${widthStyle}`}
-      disabled={disabled || isLoading}
-      {...props}
-    >
-      {isLoading ? t("auth.loging") : children}
-    </button>
+    <div className="w-1/2 flex justify-center">
+      <button
+        className={`${baseStyles} ${variantStyles[variant]} ${widthStyle}`}
+        disabled={disabled || isLoading}
+        {...props}
+      >
+        {isLoading ? t("auth.loging") : children}
+      </button>
+    </div>
   );
 };

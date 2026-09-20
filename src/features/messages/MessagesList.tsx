@@ -91,8 +91,8 @@ export const MessagesList: React.FC = () => {
         canViewAllContacts
           ? await messagesAPI.getMessagesByPharmacy(
               user.pharmacy_id,
-              clientPhone,
-              conversationUserMobile,
+              // clientPhone,
+              // conversationUserMobile,
             )
           : 
           await messagesAPI.getMessages(conversationUserMobile, clientPhone);

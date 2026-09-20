@@ -13,7 +13,6 @@ dist-ssr
 *.local
 .env
 gen-lang-client-0222261698-14cc2f011302.json
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -3,12 +3,12 @@ importScripts("https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"
 importScripts("https://www.gstatic.com/firebasejs/10.0.0/firebase-messaging-compat.js");
 
 firebase.initializeApp({
- apiKey: "AIzaSyC1bL-zEcs8FxKj_xpqnKgwE_v4V8e-1kY",
-  authDomain: "studio-8376500433-f045d.firebaseapp.com",
-  projectId: "studio-8376500433-f045d",
-  storageBucket: "studio-8376500433-f045d.firebasestorage.app",
-  messagingSenderId: "811584914377",
-  appId: "1:811584914377:web:788ec1393b438e1790de18"
+  apiKey: "__VITE_FIREBASE_API_KEY__",
+  authDomain: "__VITE_FIREBASE_AUTH_DOMAIN__",
+  projectId: "__VITE_FIREBASE_PROJECT_ID__",
+  storageBucket: "__VITE_FIREBASE_STORAGE_BUCKET__",
+  messagingSenderId: "__VITE_FIREBASE_MESSAGING_SENDER_ID__",
+  appId: "__VITE_FIREBASE_APP_ID__"
 });
 
 const messaging = firebase.messaging();
@@ -16,10 +16,11 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage(function(payload) {
   console.log("Message received in background:", payload);
 
-  const notificationTitle = payload.notification.title;
+  const notificationTitle = payload.notification?.title || "New notification";
   const notificationOptions = {
-    body: payload.notification.body,
-    icon: "/logo.png" // مسار اللوجو بتاعك
+    body: payload.notification?.body,
+    icon: "/logo.png",
+    audio: "/notification.mp3" // Add the audio file path here
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);

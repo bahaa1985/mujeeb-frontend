@@ -3,14 +3,16 @@ import { subscriptionAPI } from "../../api/subscriptionAPI";
 import { useLanguage } from "../../context/LanguageContext";
 import { useToast } from "../../context/ToastContext";
 import { Button } from "../../components/ui/Button";
+import type { AlertColor } from "@mui/material/Alert";
+import type { Plan } from "../../types/subscription";
 
 export const PlanManagement: React.FC = () => {
-  const [plans, setPlans] = useState<any[]>([]);
+  const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
   const { t } = useLanguage();
   const { showToast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingPlan, setEditingPlan] = useState<any>(null);
+  const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     messages_limit: 0,
@@ -29,7 +31,7 @@ export const PlanManagement: React.FC = () => {
       const data = await subscriptionAPI.getPlans();
       setPlans(data);
     } catch (error) {
-      showToast(t("common.error"),error);
+      showToast(t("common.error"),error as AlertColor);
     } finally {
       setLoading(false);
     }
@@ -39,7 +41,7 @@ export const PlanManagement: React.FC = () => {
     fetchPlans();
   }, []);
 
-  const handleOpenModal = (plan: any = null) => {
+  const handleOpenModal = (plan: Plan | null = null) => {
     if (plan) {
       setEditingPlan(plan);
       setFormData({
@@ -74,29 +76,29 @@ export const PlanManagement: React.FC = () => {
     e.preventDefault();
     try {
       if (editingPlan) {
-        await subscriptionAPI.updatePlan(editingPlan.id, formData);
+        await subscriptionAPI.updatePlan(editingPlan.id, formData as Plan);
         showToast(t("common.updateSuccess"), "success");
       } else {
-        await subscriptionAPI.createPlan(formData);
+        await subscriptionAPI.createPlan(formData as Plan);
         showToast(t("common.success"), "success");
       }
       setIsModalOpen(false);
       fetchPlans();
     } catch (error) {
-      showToast(t("common.error"),error);
+      showToast(t("common.error"),error as AlertColor);
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm(t("common.confirmDelete"))) return;
-    try {
-      await subscriptionAPI.deletePlan(id);
-      showToast(t("common.deleteSuccess"), "success");
-      fetchPlans();
-    } catch (error) {
-      showToast(t("common.error"),error);
-    }
-  };
+  // const handleDelete = async (id: number) => {
+  //   if (!window.confirm(t("common.confirmDelete"))) return;
+  //   try {
+  //     await subscriptionAPI.deletePlan(id);
+  //     showToast(t("common.deleteSuccess"), "success");
+  //     fetchPlans();
+  //   } catch (error) {
+  //     showToast(t("common.error"),error);
+  //   }
+  // };
 
   if (loading) return null;
 
@@ -132,12 +134,12 @@ export const PlanManagement: React.FC = () => {
                 >
                   {t("common.edit")}
                 </button>
-                <button
+                {/* <button
                   onClick={() => handleDelete(plan.id)}
                   className="text-red-500 hover:text-red-700"
                 >
                   {t("common.delete")}
-                </button>
+                </button> */}
               </div>
             </div>
             <ul className="text-sm space-y-2 mb-4 flex-1 dark:text-gray-300">

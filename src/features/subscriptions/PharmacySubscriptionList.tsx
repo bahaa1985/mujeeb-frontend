@@ -7,6 +7,7 @@ import {
 } from "../../types/subscription";
 import { useLanguage } from "../../context/LanguageContext";
 import { useToast } from "../../context/ToastContext";
+import type { AlertColor } from "@mui/material/Alert";
 
 export const PharmacySubscriptionList: React.FC = () => {
   const [pharmPlan, setPharmPlan] = useState<Subscription[]>([]);
@@ -23,7 +24,7 @@ export const PharmacySubscriptionList: React.FC = () => {
       if(data) setPharmPlan(data);  
       console.log("Fetched pharmacy plans:", data); 
     } catch (error) {
-      showToast(t("common.error"), error);
+      showToast(t("common.error"), error as AlertColor);
     } finally {
       setLoading(false);
     }
@@ -47,7 +48,7 @@ export const PharmacySubscriptionList: React.FC = () => {
       showToast(t("common.updateSuccess"), "success");
       fetchPlans();
     } catch (error) {
-      showToast(t("common.error"), error);
+      showToast(t("common.error"), error as AlertColor);
     }
   };
 
@@ -64,7 +65,7 @@ export const PharmacySubscriptionList: React.FC = () => {
       showToast(t("common.updateSuccess"), "success");
       fetchPlans();
     } catch (error) {
-      showToast(t("common.error"), error);
+      showToast(t("common.error"), error as AlertColor);
     }
   };
 
@@ -74,7 +75,7 @@ export const PharmacySubscriptionList: React.FC = () => {
       showToast(t("common.updateSuccess"), "success");
       fetchPlans();
     } catch (error) {
-      showToast(t("common.error"), error);
+      showToast(t("common.error"), error as AlertColor);
     }
   };
 

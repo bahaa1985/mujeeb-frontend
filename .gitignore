@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+.env
 gen-lang-client-0222261698-14cc2f011302.json
 
 # Editor directories and files
@@ -23,3 +24,6 @@ gen-lang-client-0222261698-14cc2f011302.json
 *.njsproj
 *.sln
 *.sw?
+
+# Keep environment variables out of version control
+

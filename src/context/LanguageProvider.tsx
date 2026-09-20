@@ -6,7 +6,9 @@ import ar from '../i18n/ar.json';
 
 type Language = 'en' | 'ar';
 
-type TranslationMap = typeof en;
+// The English and Arabic dictionaries may use either nested keys or dotted keys.
+// Keep the provider independent of one dictionary's exact shape.
+type TranslationMap = Record<string, unknown>;
 
 interface LanguageContextType {
   language: Language;

@@ -5,6 +5,8 @@ import { useLanguage } from "../../context/LanguageContext";
 import { useToast } from "../../context/ToastContext";
 import { type Pharmacy } from "../../types/pharmacy";
 import { Button } from "../../components/ui/Button";
+import type { AlertColor } from "@mui/material";
+import type {Plan} from "../../types/subscription";
 
 export const NewSubscription: React.FC<{ onSuccess: () => void }> = ({
   onSuccess,
@@ -12,7 +14,7 @@ export const NewSubscription: React.FC<{ onSuccess: () => void }> = ({
   const { t } = useLanguage();
   const { showToast } = useToast();
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
-  const [plans, setPlans] = useState<any[]>([]);
+  const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
@@ -35,7 +37,7 @@ export const NewSubscription: React.FC<{ onSuccess: () => void }> = ({
         setPharmacies(pharmaciesData);
         setPlans(plansData);
       } catch (error) {
-        showToast(t("common.error"), error);
+        showToast(t("common.error"), error as AlertColor);
       } finally {
         setLoading(false);
       }
@@ -57,9 +59,9 @@ export const NewSubscription: React.FC<{ onSuccess: () => void }> = ({
       });
       showToast(t("common.success"), "success");
       onSuccess();
-    } catch (error: any) {
+    } catch (error: unknown) {
       const message =
-        error.response?.data?.message ===
+        (error as { response?: { data?: { message?: string } } }).response?.data?.message ===
         "Pharmacy already has an existing subscription"
           ? t("subscriptions.subscriptionExists")
           : t("common.error");

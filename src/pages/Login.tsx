@@ -6,12 +6,12 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div
-      className="h-screen bg-slate-950 bg-contain bg-center bg-no-repeat flex items-center justify-center p-4 relative"
+      className="h-screen  bg-slate-950 bg-contain bg-center bg-no-repeat flex items-center justify-center p-4 relative"
       // style={{ backgroundImage: "url('/mujeeb-splashscreen.jfif')" }}
       dir={dir}
     >
       <div className="absolute inset-0 bg-slate-950/45" />
-      <div className="relative bg-white/95 dark:bg-slate-900/95 rounded-lg shadow-xl p-4 w-full max-w-md">
+      <div className="h-auto relative bg-white/95 dark:bg-slate-900/95 rounded-lg shadow-xl p-4 w-full max-w-md">
         {/* <h1 className="text-3xl font-bold text-gray-900 mb-2 text-center">
           {t('layout.appName')}
         </h1> */}

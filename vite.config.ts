@@ -47,7 +47,7 @@ export default defineConfig(({ mode }) => {
       includeAssets: ['pwa-192.png', 'pwa-512.jfif'],
       manifest: {
         name: 'Mujeeb AI',
-        short_name: 'PharmAssist',
+        short_name: 'Mujeeb AI',
         description: 'نظام الرد الآلي الذكي لعملاء الصيدلية',
         theme_color: '#ffffff',
         background_color: '#ffffff',

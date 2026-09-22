@@ -44,7 +44,7 @@ export const MessagesList: React.FC = () => {
   const [pharmacyUsers, setPharmacyUsers] = useState<User[]>([]);
   const [selectedPharmacyUser, setSelectedPharmacyUser] = useState<User | null>(null);
   const [showPharmacyUsers, setShowPharmacyUsers] = useState(false);
-  // const [isAiMode, setIsAiMode] = useState(user?.ai_mode);
+  const [isAiMode] = useState(user?.ai_mode);
 
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -708,7 +708,7 @@ export const MessagesList: React.FC = () => {
           <textarea
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            disabled={isAiEnabled}
+            disabled={isAiMode}
             rows={4}
             placeholder={
               isAiEnabled

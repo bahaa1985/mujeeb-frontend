@@ -24,15 +24,15 @@ export const MessageItem: React.FC<MessageItemProps> = ({
   const { t, language } = useLanguage();
 
   return (
-    <div className={`flex ${alignRight ? 'justify-end' : 'justify-start'} items-start gap-3`}>
+    <div className={`flex min-w-0 w-full ${alignRight ? 'justify-end' : 'justify-start'} items-start gap-2 sm:gap-3`}>
       <div
-        className={`max-w-[80%] rounded-3xl border px-4 py-3 shadow-sm ${
+        className={`min-w-0 max-w-[92%] rounded-3xl border px-3 py-2.5 shadow-sm sm:max-w-[80%] sm:px-4 sm:py-3 ${
           isOwnMessage
             ? 'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/40'
             : 'border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-800'
         }`}
       >
-        <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-300">
+        <div className="mb-2 min-w-0 break-words text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-300">
           {senderName}
         </div>
         {isEditing ? (
@@ -48,10 +48,10 @@ export const MessageItem: React.FC<MessageItemProps> = ({
               <img
                 src={message.image_url}
                 alt="Client media"
-                className="max-h-80 w-full rounded-xl object-cover"
+                className="h-auto max-h-80 max-w-full rounded-xl object-contain"
               />
             ) : (
-              <p className="whitespace-pre-wrap text-sm text-gray-900 dark:text-slate-100">
+              <p className="break-words whitespace-pre-wrap text-sm text-gray-900 dark:text-slate-100">
                 {message.message || t('messages.noContent')}
               </p>
             )}

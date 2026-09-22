@@ -47,27 +47,27 @@ export const PageWrapper: React.FC<PageWrapperProps> = ({
             </button>
           </>
         )}
-                <main className={`min-w-0 flex-1 flex flex-col p-2 sm:p-8 bg-gray-50/50 transition-all duration-300 ${
+                <main className={`min-w-0 flex-1 flex flex-col sm:p-8 bg-gray-50/50 transition-all duration-300 ${
                   showSidebar ? (dir === 'rtl' ? 'md:mr-64' : 'md:ml-64') : ''
                 }`}>
           <div className="w-full max-w-7xl mx-auto flex-1">
-            <div className="rounded-xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-gray-100 p-3 sm:p-8 shadow-sm">
+            <div className=" sm:rounded-3xl bg-white dark:bg-slate-900 sm:border sm:border-gray-100 p-2 sm:p-4 shadow-sm">
               {children}
             </div>
           </div>
-          <footer className="w-full max-w-7xl mx-auto mt-6 px-2 pb-2 sm:mt-8 sm:pb-0">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200 dark:border-slate-800 pt-4 text-center sm:text-start">
+          <footer className="w-full max-w-7xl mx-auto mt-6 rounded-lg bg-gray-50 px-3 pb-3 text-gray-500 dark:bg-slate-900 dark:text-slate-400 sm:mt-8 sm:px-2 sm:pb-0">
+            <div className="flex flex-col items-center justify-between gap-3 border-t border-gray-200 py-4 text-center dark:border-slate-800 sm:flex-row sm:text-start">
               <img
                 src="/mujeeb-navbar-light.png"
                 alt="Mujeeb"
-                className="h-8 w-auto object-contain"
+                className="h-8 w-auto object-contain dark:hidden"
               />
-              {/* <img
-                src="/mujeeb-navbar-light.png"
+              <img
+                src="/mujeeb-navbar-ldark.png"
                 alt="Mujeeb"
                 className="hidden h-8 w-auto object-contain dark:block"
-              /> */}
-              <p className="text-xs text-gray-500 dark:text-slate-400">
+              />
+              <p className="text-xs">
                 Mujeeb v{packageJson.version} | Owned and developed by Bahaa Salah - 01221483799
               </p>
             </div>

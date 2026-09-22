@@ -30,7 +30,7 @@ export const requestNotificationPermission = async (userId: number) => {
       });
 
       if (currentToken) {
-        console.log("FCM Token generated:", currentToken);
+        // console.log("FCM Token generated:", currentToken);
         
         // 2. هنا بنستخدم الـ API اللي عملناها في الخطوة التالتة!
         await userAPI.updateFcmToken({
@@ -38,7 +38,7 @@ export const requestNotificationPermission = async (userId: number) => {
           fcmToken: currentToken
         });
         
-        console.log("Token sent to backend successfully.");
+        // console.log("Token sent to backend successfully.");
       }
     } else {
       console.log("Notification permission denied.");
@@ -51,7 +51,7 @@ export const requestNotificationPermission = async (userId: number) => {
 // 3. الاستماع للإشعارات والتطبيق مفتوح (Foreground)
 export const listenForForegroundMessages = () => {
   onMessage(messaging, (payload) => {
-    console.log("Message received in foreground:", payload);
+    // console.log("Message received in foreground:", payload);
     
     // تشغيل ملف صوتي
     const audio = new Audio('/notification-sound.mp3'); // مسار ملف الصوت في الـ public فولدر

@@ -478,7 +478,7 @@ export const MessagesList: React.FC = () => {
   const isAiEnabled = !!activePharmacyUser?.ai_mode;
 
   return (
-    <div className="space-y-4">
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-x-hidden">
       {canViewAllContacts && (
         <section className="bg-white dark:bg-slate-900 border dark:border-gray-800 shadow-md rounded-lg p-6 mb-8">
           <button
@@ -518,22 +518,24 @@ export const MessagesList: React.FC = () => {
         </section>
       )}
 
-      {activePharmacyUser && <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
+      {activePharmacyUser && <div className="grid min-h-0 min-w-0 flex-1 gap-4 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-6">
       {/* Sidebar: contact and client selection list */}
-      <ContactsList
-        contacts={contacts}
-        messages={messages}
-        selectedClient={selectedClient}
-        clientSearch={clientSearch}
-        currentUserMobile={conversationUserMobile}
-        contactMap={contactMap}
-        onClientSearchChange={setClientSearch}
-        onSelectClient={handleSelectClient}
-        blockedPhones={blockedPhones}
-        onToggleBlock={handleToggleBlock}
-      />
+      <div className={`box-border min-h-0 min-w-0 w-full max-w-full ${selectedClient ? "max-h-[35dvh] lg:max-h-none" : ""}`}>
+        <ContactsList
+          contacts={contacts}
+          messages={messages}
+          selectedClient={selectedClient}
+          clientSearch={clientSearch}
+          currentUserMobile={conversationUserMobile}
+          contactMap={contactMap}
+          onClientSearchChange={setClientSearch}
+          onSelectClient={handleSelectClient}
+          blockedPhones={blockedPhones}
+          onToggleBlock={handleToggleBlock}
+        />
+      </div>
 
-      {selectedClient && <section className="space-y-4">
+      {selectedClient && <section className="min-w-0 space-y-4">
         {/* Conversation header: current chat info and controls */}
         <div className="rounded-xl border border-gray-200 bg-white dark:border-slate-800 dark:bg-slate-900 p-4 shadow-sm">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -597,7 +599,7 @@ export const MessagesList: React.FC = () => {
 
           <div
             ref={messageContainerRef}
-            className="sidebar-scrollbar mt-4 flex h-[calc(100vh-380px)] flex-col gap-3 overflow-y-auto rounded-xl border border-gray-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/70"
+            className="sidebar-scrollbar mt-4 flex min-h-0 max-h-[45dvh] flex-col gap-3 overflow-y-auto overflow-x-hidden rounded-xl border border-gray-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/70 sm:max-h-[calc(100dvh-25rem)] sm:p-4 lg:max-h-screen lg:flex-1"
           >
             <style>{`
             .sidebar-scrollbar {

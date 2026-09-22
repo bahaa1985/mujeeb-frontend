@@ -86,8 +86,8 @@ export const ContactsList: React.FC<ContactsListProps> = ({
   }, [participants, contactMap, clientSearch]);
 
     return (
-    <aside className="flex flex-col gap-4 h-full">
-      <div className="flex min-h-0 flex-1 flex-col rounded-xl border border-gray-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-4">
+    <aside className="box-border flex h-full min-h-0 w-full min-w-0 max-w-full flex-col gap-4 overflow-hidden">
+      <div className="box-border flex min-h-0 min-w-0 max-w-full flex-1 flex-col rounded-xl border border-gray-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-4">
         <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-slate-100">{t('messages.clients')}</h2>
         <p className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-gray-500 dark:text-slate-300">{t('messages.clientsHint')}</p>
         <input
@@ -98,37 +98,39 @@ export const ContactsList: React.FC<ContactsListProps> = ({
           className="mt-2 w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-900 sm:mt-3 sm:py-2"
         />
 
-      <div className="contacts-scrollbar mt-3 min-h-0 flex-1 overflow-y-auto rounded-lg border border-gray-200 bg-gray-50 p-2 dark:border-slate-700 dark:bg-slate-800/70 sm:p-4">
+      <div className="contacts-scrollbar mt-3 min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain rounded-lg border border-gray-200 bg-gray-50 p-2 dark:border-slate-700 dark:bg-slate-800/70 sm:p-4">
         {filteredParticipants.length === 0 ? (
           <p className="text-sm text-gray-500 text-center py-4">{t('messages.noClients')}</p>
         ) : (
-          <ul className="space-y-1.5 sm:space-y-2">
+          <ul className="min-w-0 space-y-1.5 sm:space-y-2">
             {filteredParticipants.map(({ phone, latestMessage }) => {
               const contact = contactMap.get(phone);
               const isBlocked = blockedPhones.has(phone);
               const displayName = contact?.contact_name?.trim();
 
               return (
-                <li key={phone} className="group relative ">
+                <li key={phone} className="group relative min-w-0">
                   <button
                     type="button"
                     onClick={() => onSelectClient(phone, contact?.contact_name ?? null)}
                     aria-selected={selectedClient === phone}
-                    className={`w-full rounded-lg sm:rounded-xl px-3 py-2 sm:py-3 text-left transition focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                    className={`w-full min-w-0 rounded-lg px-3 py-2 pr-10 text-left transition focus:outline-none focus:ring-2 focus:ring-blue-400 sm:rounded-xl sm:py-3 ${
                       selectedClient === phone
                         ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-300 dark:bg-blue-600 dark:ring-blue-400'
                         : 'bg-gray-50 text-gray-900 hover:bg-gray-100 dark:bg-slate-500 dark:text-slate-100 dark:hover:bg-slate-600'
                     }`}
                   >
-                    <div className="font-semibold text-sm sm:text-base truncate flex items-center gap-2">
-                      {displayName ? `${displayName} (${phone})` : phone}
+                    <div className="flex min-w-0 items-center gap-2 truncate text-sm font-semibold sm:text-base">
+                      <span className="min-w-0 truncate">
+                        {displayName ? `${displayName} (${phone})` : phone}
+                      </span>
                       {isBlocked && (
-                        <span className="text-[10px] bg-red-600 text-red-100 px-1.5 py-0.5 rounded-full uppercase">
+                        <span className="shrink-0 rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] uppercase text-red-100">
                           {t('common.blocked')}
                         </span>
                       )}
                     </div>
-                    <div className="text-[10px] sm:text-xs">
+                    <div className="truncate text-[10px] sm:text-xs">
                       {phone}
                     </div>
                     {latestMessage && (
@@ -143,7 +145,7 @@ export const ContactsList: React.FC<ContactsListProps> = ({
                       onToggleBlock(phone, !isBlocked);
                     }}
                     title={isBlocked ? "Unblock" : "Block"}
-                    className={`absolute top-1/2 -translate-y-1/2 right-2 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${
+                    className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-2 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100 ${
                       isBlocked ? 'text-green-600 hover:bg-green-50' : 'text-red-600 hover:bg-red-50'
                     }`}
                   >

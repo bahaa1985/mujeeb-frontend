@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import { inventoryAPI } from '../../api/inventoryAPI';
+import UploadInventoryWorker from './uploadInventoryWorker?worker';
 // import { googleDriveAPI } from '../../api/googleDriveAPI';
 import { Button } from '../../components/ui/Button';
 // import { Modal } from '../../components/ui/Modal';
@@ -58,7 +59,7 @@ export const UploadInventory: React.FC = () => {
     const workerCount = Math.min(cpuCount, rows.length);
     const chunkSize = Math.ceil(rows.length / workerCount);
     setChunksCount(workerCount);
-    const workerUrl = new URL('./uploadInventoryWorker.ts', import.meta.url);
+    // const workerUrl = new URL('./uploadInventoryWorker.ts', import.meta.url);
 
     const chunkPromises: Promise<{ chunkIndex: number; rows: ExcelRow[] }>[] = [];
 
@@ -67,7 +68,7 @@ export const UploadInventory: React.FC = () => {
       if (start >= rows.length) break;
 
       const chunkRows = rows.slice(start, Math.min(start + chunkSize, rows.length));
-      const worker = new Worker(workerUrl, { type: 'module' });
+      const worker = new UploadInventoryWorker();
 
       const promise = new Promise<{ chunkIndex: number; rows: ExcelRow[] }>((resolve, reject) => {
         const cleanup = () => {

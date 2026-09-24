@@ -107,7 +107,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     <>
       {/* Overlay for mobile */}
       <div
-        className={`fixed inset-x-0 top-16 bottom-0 bg-black/50 z-40 md:hidden transition-opacity duration-300 ${
+        className={`fixed inset-x-0 top-0 bottom-0 bg-black/50 z-40 md:hidden transition-opacity duration-300 ${
           isOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
@@ -116,9 +116,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       />
 
       <aside
-        className={`fixed top-16 md:top-0 ${
+        className={`fixed top-0 ${
           dir === "rtl" ? "right-0" : "left-0"
-        } w-64 max-w-[85vw] ${theme.sidebar} border-x h-[calc(100vh-4rem)] md:h-screen flex flex-col z-50 transform transition-transform duration-300 ease-in-out ${
+        } w-64 max-w-[85vw] ${theme.sidebar} border-x h-screen flex flex-col z-[10000] sm:z-40 transform transition-transform duration-300 ease-in-out ${
           isOpen
             ? "translate-x-0"
             : dir === "rtl"

@@ -55,7 +55,10 @@ export const PageWrapper: React.FC<PageWrapperProps> = ({
               {children}
             </div>
           </div>
-          <footer className="w-full max-w-7xl mx-auto mt-6 rounded-lg bg-gray-50 px-3 pb-3 text-gray-500 dark:bg-slate-900 dark:text-slate-400 sm:mt-8 sm:px-2 sm:pb-0">
+          
+        </main>
+      </div>
+      <footer className="relative z-[9999] w-full h-[10%] mx-auto mt-6 bg-gray-50 px-3 pb-3 text-gray-500 dark:bg-slate-900 dark:text-slate-400 sm:mt-8 sm:px-2 sm:pb-0">
             <div className="flex flex-col items-center justify-between gap-3 border-t border-gray-200 py-4 text-center dark:border-slate-800 sm:flex-row sm:text-start">
               <img
                 src="/mujeeb-navbar-light.png"
@@ -72,8 +75,6 @@ export const PageWrapper: React.FC<PageWrapperProps> = ({
               </p>
             </div>
           </footer>
-        </main>
-      </div>
     </div>
   );
 };

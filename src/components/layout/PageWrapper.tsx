@@ -58,7 +58,11 @@ export const PageWrapper: React.FC<PageWrapperProps> = ({
           
         </main>
       </div>
-      <footer className="relative z-[9999] w-full h-[10%] mx-auto mt-6 bg-gray-50 px-3 pb-3 text-gray-500 dark:bg-slate-900 dark:text-slate-400 sm:mt-8 sm:px-2 sm:pb-0">
+      <footer className={`relative z-[9999] w-full h-[10%] ${
+        showSidebar
+          ? `md:w-[calc(100%_-_16rem)] ${dir === 'rtl' ? 'md:mr-64' : 'md:ml-64'}`
+          : ''
+      } mt-6 bg-gray-50 px-3 pb-3 text-gray-500 dark:bg-slate-900 dark:text-slate-400 sm:mt-8 sm:px-2 sm:pb-0`}>
             <div className="flex flex-col items-center justify-between gap-3 border-t border-gray-200 py-4 text-center dark:border-slate-800 sm:flex-row sm:text-start">
               <img
                 src="/mujeeb-navbar-light.png"

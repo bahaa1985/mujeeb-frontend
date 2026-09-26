@@ -122,6 +122,31 @@ export const normalizeArabicText = (text: string): string => {
     .trim();
 };
 
+export const normalizeDrugNameForLookup = (name: string): string => {
+  return normalizeArabicText(moveQuantityToEnd(name)).toLowerCase();
+};
+
+export const createDrugCardNameIndexes = (drugCardData: DrugCardEntry[]): {
+  byEnglishName: Map<string, DrugCardEntry>;
+  byArabicName: Map<string, DrugCardEntry>;
+} => {
+  const byEnglishName = new Map<string, DrugCardEntry>();
+  const byArabicName = new Map<string, DrugCardEntry>();
+
+  drugCardData.forEach(drug => {
+    if (drug.e_name?.trim()) {
+      const key = normalizeDrugNameForLookup(drug.e_name);
+      if (key && !byEnglishName.has(key)) byEnglishName.set(key, drug);
+    }
+    if (drug.a_name?.trim()) {
+      const key = normalizeDrugNameForLookup(drug.a_name);
+      if (key && !byArabicName.has(key)) byArabicName.set(key, drug);
+    }
+  });
+
+  return { byEnglishName, byArabicName };
+};
+
 export const normalizeDrugCardData = (drugCardData: DrugCardEntry[]): DrugCardEntry[] => {
   return drugCardData.map(drug => {
     const rawAName = drug.a_name ? moveQuantityToEnd(drug.a_name) : '';

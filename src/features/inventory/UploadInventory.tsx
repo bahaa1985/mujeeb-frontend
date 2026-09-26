@@ -8,6 +8,7 @@ import { Button } from '../../components/ui/Button';
 import { useToast } from '../../context/ToastContext';
 import type { DrugCardEntry } from './uploadInventoryHandler';
 import {
+  createDrugCardNameIndexes,
   groupDrugCardByFirstChar,
   normalizeDrugCardData
 } from './uploadInventoryHandler';
@@ -49,7 +50,9 @@ export const UploadInventory: React.FC = () => {
     dosageFormIndex: number,
     unitsIndex: number,
     activeIndex: number,
-    drugCardByFirstChar: Record<string, DrugCardEntry[]>
+    drugCardByFirstChar: Record<string, DrugCardEntry[]>,
+    drugCardByEnglishName: Map<string, DrugCardEntry>,
+    drugCardByArabicName: Map<string, DrugCardEntry>
   ): Promise<ExcelRow[]> => {
     if (rows.length === 0) {
       return rows;
@@ -100,7 +103,9 @@ export const UploadInventory: React.FC = () => {
           dosageFormIndex,
           unitsIndex,
           activeIndex,
-          drugCardByFirstChar
+          drugCardByFirstChar,
+          drugCardByEnglishName,
+          drugCardByArabicName
         });
       });
       chunkPromises.push(promise);
@@ -146,7 +151,10 @@ export const UploadInventory: React.FC = () => {
       const dataRows = jsonData.slice(1);
 
       // 2. Check required columns
-      const requiredColumns = ['a_name', 'price','quantity'];
+      const requiredColumns = ['price','quantity']
+      .concat(headers.includes('a_name') ? ['a_name'] : [])
+      .concat(headers.includes('e_name') ? ['e_name'] : []);
+
       const missingColumns = requiredColumns.filter(col => !headers.includes(col));
 
       if (missingColumns.length > 0) {
@@ -154,14 +162,18 @@ export const UploadInventory: React.FC = () => {
       }
 
       // Get column indices
-      const a_nameIndex = headers.indexOf('a_name');
-      const e_nameIndex = headers.indexOf('e_name');
+      const nameHeaders = [...headers];
+      if (!nameHeaders.includes('a_name')) nameHeaders.push('a_name');
+      if (!nameHeaders.includes('e_name')) nameHeaders.push('e_name');
+
+      const a_nameIndex = nameHeaders.indexOf('a_name');
+      const e_nameIndex = nameHeaders.indexOf('e_name');
 
       // 3. Add form_dosage column
-      const extendedHeaders = [...headers, 'dosage_form', 'units_count', 'active'];
-      const dosageFormIndex = headers.length;
-      const unitsIndex = headers.length + 1;
-      const activeIndex = headers.length + 2;
+      const extendedHeaders = [...nameHeaders, 'dosage_form', 'units_count', 'active'];
+      const dosageFormIndex = nameHeaders.length;
+      const unitsIndex = nameHeaders.length + 1;
+      const activeIndex = nameHeaders.length + 2;
 
       // Load DrugCard data for comparison
       const drugCardData = await loadDrugCardData();
@@ -172,6 +184,7 @@ export const UploadInventory: React.FC = () => {
 
       // Normalize DrugCard data and group by first character for faster search
       const normalizedDrugCardData = normalizeDrugCardData(drugCardData);
+      const { byEnglishName, byArabicName } = createDrugCardNameIndexes(drugCardData);
 
       // Group drugs by first character for faster lookup
       const drugCardByFirstChar = groupDrugCardByFirstChar(normalizedDrugCardData);
@@ -187,7 +200,9 @@ export const UploadInventory: React.FC = () => {
         dosageFormIndex,
         unitsIndex,
         activeIndex,
-        drugCardByFirstChar
+        drugCardByFirstChar,
+        byEnglishName,
+        byArabicName
       );
       
       // ensure progress bar shows complete
@@ -289,8 +304,7 @@ export const UploadInventory: React.FC = () => {
 
       showToast(t('inventory.uploadSuccess'), 'success');
     } catch (err) {
-      console.log("upload error front",JSON.stringify(err, null, 2));
-      
+      // console.log("upload error front",JSON.stringify(err, null, 2));     
       const message = err instanceof Error ? err.message : 'Upload failed';
       setStatus(`✗ Upload failed: ${message}`);
       showToast(message, 'error');

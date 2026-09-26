@@ -5,7 +5,8 @@ import {
   getFirstSector,
   isUnitOneDosageForm,
   moveQuantityToEnd,
-  normalizeArabicText
+  normalizeArabicText,
+  normalizeDrugNameForLookup
 } from './uploadInventoryHandler';
 
 type ExcelRow = (string | number | boolean | null)[];
@@ -19,6 +20,8 @@ type WorkerRequest = {
   unitsIndex: number;
   activeIndex?: number;
   drugCardByFirstChar: Record<string, DrugCardEntry[]>;
+  drugCardByEnglishName: Map<string, DrugCardEntry>;
+  drugCardByArabicName: Map<string, DrugCardEntry>;
 };
 
 type WorkerResponse = {
@@ -30,6 +33,17 @@ const processChunk = (request: WorkerRequest): WorkerResponse => {
   const processedRows = request.rows.map(row => {
     if (!row || row.length === 0) {
       return row;
+    }
+
+    const aName = request.a_nameIndex !== -1 ? row[request.a_nameIndex]?.toString().trim() : '';
+    const eName = request.e_nameIndex !== -1 ? row[request.e_nameIndex]?.toString().trim() : '';
+
+    if (!aName && eName && request.a_nameIndex !== -1) {
+      const matchedDrug = request.drugCardByEnglishName.get(normalizeDrugNameForLookup(eName));
+      if (matchedDrug?.a_name) row[request.a_nameIndex] = matchedDrug.a_name;
+    } else if (!eName && aName && request.e_nameIndex !== -1) {
+      const matchedDrug = request.drugCardByArabicName.get(normalizeDrugNameForLookup(aName));
+      if (matchedDrug?.e_name) row[request.e_nameIndex] = matchedDrug.e_name;
     }
 
     const searchName = request.e_nameIndex !== -1 && row[request.e_nameIndex]

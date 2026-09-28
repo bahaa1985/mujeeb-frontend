@@ -39,7 +39,7 @@ export const DashboardStats: React.FC = () => {
   const { t } = useLanguage();
   const { user } = useAuth();
   const { pharmacy } = usePharmacy();
-  console.log("pharmacy", pharmacy)
+  // console.log("pharmacy", pharmacy)
   const [messagesCount, setMessagesCount] = useState<string | number>(0);
   const [inventoryCount, setInventoryCount] = useState<string | number>(0);
   const [usersCount, setUsersCount] = useState<string | number>(0);

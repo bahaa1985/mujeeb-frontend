@@ -18,7 +18,7 @@ export const NewSubscription: React.FC<{ onSuccess: () => void }> = ({
   const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
-    pharmacy_id: "",
+    pharmacy_id: 1,
     plan_id: "",
     // bill_due: (() => {
     //   const date = new Date();
@@ -55,7 +55,7 @@ export const NewSubscription: React.FC<{ onSuccess: () => void }> = ({
     try {
       await subscriptionAPI.createPharmacySubscription({
         pharmacy_id: formData.pharmacy_id,
-        plan_id: Number(formData.plan_id),
+        plan_id: Number(formData.plan_id)
       });
       showToast(t("common.success"), "success");
       onSuccess();
@@ -89,7 +89,7 @@ export const NewSubscription: React.FC<{ onSuccess: () => void }> = ({
               required
               value={formData.pharmacy_id}
               onChange={(e) =>
-                setFormData({ ...formData, pharmacy_id: e.target.value })
+                setFormData({ ...formData, pharmacy_id: Number(e.target.value) })
               }
               className="w-full min-w-0 border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-2 focus:ring-2 focus:ring-primary outline-none"
             >

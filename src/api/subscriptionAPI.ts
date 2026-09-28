@@ -84,17 +84,17 @@ export const subscriptionAPI = {
 
   // create new pharmacy subscription
   createPharmacySubscription: async (data: {
-    pharmacy_id: string | number;
-    plan_id: number;
-    bill_due?: string;
+    pharmacy_id: number;
+    plan_id: number
   }): Promise<Subscription> => {
     const payload = {
       ...data,
-      bill_due: data.bill_due ?? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      // bill_due: data.bill_due ?? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     };
-
+console.log("payload",payload)
     const response = await api.post("/subscriptions/create", payload);
-    return response.data.data;
+    // console.log("createPharmacySubscription response", response.data);
+    return response.data;
   },
 
   // renew a subscription

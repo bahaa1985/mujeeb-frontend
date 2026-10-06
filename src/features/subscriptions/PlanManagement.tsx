@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { subscriptionAPI } from "../../api/subscriptionAPI";
+import { plansAPI } from "../../api/plansAPI";
 import { useLanguage } from "../../context/LanguageContext";
 import { useToast } from "../../context/ToastContext";
 import { Button } from "../../components/ui/Button";
+import { CheckCircleOutline, HighlightOff } from "@mui/icons-material";
 import type { AlertColor } from "@mui/material/Alert";
-import type { Plan } from "../../types/subscription";
+import type {Plan, PlanInput } from "../../types/plan";
+
+const StatusIcon = ({ enabled }: { enabled: boolean }) =>
+  enabled ? (
+    <CheckCircleOutline fontSize="small" color="success" titleAccess="Enabled" />
+  ) : (
+    <HighlightOff fontSize="small" color="disabled" titleAccess="Disabled" />
+  );
 
 export const PlanManagement: React.FC = () => {
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -13,13 +21,12 @@ export const PlanManagement: React.FC = () => {
   const { showToast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<PlanInput>({
     name: "",
     messages_limit: 0,
+    images_limit: 0,
     price: 0,
     common_replies: false,
-    prescription_reader: false,
-    prescription_reader_100:false,
     order_notification: false,
     basic_dashboard:false,
     advanced_dashboard: false,
@@ -28,7 +35,7 @@ export const PlanManagement: React.FC = () => {
   const fetchPlans = async () => {
     try {
       setLoading(true);
-      const data = await subscriptionAPI.getPlans();
+      const data = await plansAPI.getPlans();
       setPlans(data);
     } catch (error) {
       showToast(t("common.error"),error as AlertColor);
@@ -47,10 +54,9 @@ export const PlanManagement: React.FC = () => {
       setFormData({
         name: plan.name,
         messages_limit: plan.messages_limit,
+        images_limit: plan.images_limit ?? 0,
         price: Number(plan.price),
         common_replies: plan.common_replies,
-        prescription_reader: plan.prescription_reader,
-        prescription_reader_100:plan.prescription_reader_100,
         order_notification: plan.order_notification,
         basic_dashboard:plan.basic_dashboard,
         advanced_dashboard: plan.advanced_dashboard,
@@ -60,10 +66,9 @@ export const PlanManagement: React.FC = () => {
       setFormData({
         name: "",
         messages_limit: 100,
+        images_limit: 0,
         price: 0,
         common_replies: false,
-        prescription_reader: false,
-        prescription_reader_100:false,
         order_notification: false,
         basic_dashboard:false,
         advanced_dashboard: false,
@@ -76,10 +81,10 @@ export const PlanManagement: React.FC = () => {
     e.preventDefault();
     try {
       if (editingPlan) {
-        await subscriptionAPI.updatePlan(editingPlan.id, formData as Plan);
+        await plansAPI.updatePlan(editingPlan.id, formData);
         showToast(t("common.updateSuccess"), "success");
       } else {
-        await subscriptionAPI.createPlan(formData as Plan);
+        await plansAPI.createPlan(formData);
         showToast(t("common.success"), "success");
       }
       setIsModalOpen(false);
@@ -117,7 +122,7 @@ export const PlanManagement: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {plans.sort((a,b)=>a.id-b.id).map((plan) => (
+        {[...plans].sort((a, b) => a.id - b.id).map((plan) => (
           <div
             key={plan.id}
             className="border dark:border-gray-700 rounded-xl p-4 flex flex-col"
@@ -144,23 +149,11 @@ export const PlanManagement: React.FC = () => {
             </div>
             <ul className="text-sm space-y-2 mb-4 flex-1 dark:text-gray-300">
               <li>• {plan.messages_limit} {t("subscriptions.messages")}</li>
-              <li>• {plan.common_replies ? "✅" : "❌"} {t("subscriptions.common_replies")}</li>
-              {plan.prescription_reader_100 === true?<li>{"•"+" "+"✅"+" "+t("subscriptions.prescription_reader_100")}</li>:null}   
-              {plan.prescription_reader === true ? <li>{"•"+" "+"✅"+" "+t("subscriptions.prescription_reader")}</li>:null}              
-              {plan.basic_dashboard === true? <li>{"•"+" "+"✅"+" "+t("subscriptions.basic_dashboard")}</li>:null}
-              {plan.advanced_dashboard ===true ? <li>{"•"+" "+"✅"+" "+t("subscriptions.advanced_dashboard")}</li>:null}
-              <li>• {plan.order_notification ? "✅" : "❌"} {t("subscriptions.order_notification")}</li>
-              {/* {
-                plan.prescription_reader_100 === true ? <li>• ✅ {t("subscriptions.prescription_reader_100")}</li>:null 
-              }
-              {plan.prescription_reader ??  <li>• ✅ {t("subscriptions.prescription_reader")}</li>}                            
-              <li>• {plan.order_notification ? "✅" : "❌"} {t("subscriptions.order_notification")}</li>
-              {
-                plan.basic_dashboard ?? <li>• "✅" {t("subscriptions.basic_dashboard")}</li>
-              }             
-              {
-                plan.advanced_dashboard ?? <li>• "✅" {t("subscriptions.advanced_dashboard")}</li>
-              } */}
+              <li>• {t("subscriptions.images_limit")}: {plan.images_limit}</li>
+              <li>• <StatusIcon enabled={plan.common_replies} /> {t("subscriptions.common_replies")}</li>
+              {plan.basic_dashboard === true ? <li>• <StatusIcon enabled /> {t("subscriptions.basic_dashboard")}</li> : null}
+              {plan.advanced_dashboard === true ? <li>• <StatusIcon enabled /> {t("subscriptions.advanced_dashboard")}</li> : null}
+              <li>• <StatusIcon enabled={plan.order_notification} /> {t("subscriptions.order_notification")}</li>
             </ul>
           </div>
         ))}
@@ -192,9 +185,25 @@ export const PlanManagement: React.FC = () => {
                   </label>
                   <input
                     type="number"
+                    min="0"
+                    step="1"
                     required
                     value={formData.messages_limit}
                     onChange={(e) => setFormData({ ...formData, messages_limit: Number(e.target.value) })}
+                    className="w-full border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-2"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1 dark:text-gray-300">
+                    {t("subscriptions.images_limit")}
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    required
+                    value={formData.images_limit}
+                    onChange={(e) => setFormData({ ...formData, images_limit: Number(e.target.value) })}
                     className="w-full border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-2"
                   />
                 </div>
@@ -214,8 +223,6 @@ export const PlanManagement: React.FC = () => {
               <div className="space-y-2">
                 {[
                   "common_replies",
-                  "prescription_reader_100",
-                  "prescription_reader",
                   "order_notification",
                   "basic_dashboard",
                   "advanced_dashboard",
@@ -223,7 +230,7 @@ export const PlanManagement: React.FC = () => {
                   <label key={key} className="flex items-center gap-2 cursor-pointer dark:text-gray-300">
                     <input
                       type="checkbox"
-                      checked={(formData as any)[key]}
+                      checked={(formData as unknown as Record<string, boolean>)[key]}
                       onChange={(e) => setFormData({ ...formData, [key]: e.target.checked })}
                       className="rounded text-primary"
                     />

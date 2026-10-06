@@ -17,12 +17,12 @@ export const PharmacySubscriptionList: React.FC = () => {
   const { t } = useLanguage();
   const { showToast } = useToast();
 
-  const fetchPlans = async () => {
+  const fetchSubscriptions = async () => {
     try {
       setLoading(true);
-      const data = await subscriptionAPI.getAllPharmacyPlans();
-      if(data) setPharmPlan(data);  
-      console.log("Fetched pharmacy plans:", data); 
+      const data = await subscriptionAPI.getAllPharmacySubscriptions();
+      if (data) setPharmPlan(data);
+      console.log("Fetched pharmacy subscriptions:", data);
     } catch (error) {
       showToast(t("common.error"), error as AlertColor);
     } finally {
@@ -31,7 +31,7 @@ export const PharmacySubscriptionList: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchPlans();
+    fetchSubscriptions();
   }, []);
 
   const totalPages = Math.ceil(pharmPlan.length / itemsPerPage);
@@ -40,13 +40,13 @@ export const PharmacySubscriptionList: React.FC = () => {
     currentPage * itemsPerPage,
   );
 
-    const handleRenewBilling = async (plan: Subscription) => {
+  const handleRenewBilling = async (plan: Subscription) => {
     try {
       await subscriptionAPI.renewPharmacyBilling({
         subscriptionId: Number(plan.id),
       });
       showToast(t("common.updateSuccess"), "success");
-      fetchPlans();
+      fetchSubscriptions();
     } catch (error) {
       showToast(t("common.error"), error as AlertColor);
     }
@@ -63,7 +63,7 @@ export const PharmacySubscriptionList: React.FC = () => {
           : SubscriptionState.ACTIVE;
       await subscriptionAPI.updatePlanState(subscriptionId, newState);
       showToast(t("common.updateSuccess"), "success");
-      fetchPlans();
+      fetchSubscriptions();
     } catch (error) {
       showToast(t("common.error"), error as AlertColor);
     }
@@ -73,14 +73,13 @@ export const PharmacySubscriptionList: React.FC = () => {
     try {
       await subscriptionAPI.toggleNextMonthPaid(subscriptionId);
       showToast(t("common.updateSuccess"), "success");
-      fetchPlans();
+      fetchSubscriptions();
     } catch (error) {
       showToast(t("common.error"), error as AlertColor);
     }
   };
 
   if (loading) return null;
-
 
   return (
     <div className="space-y-4">
@@ -90,19 +89,25 @@ export const PharmacySubscriptionList: React.FC = () => {
             <thead className="bg-gray-50 dark:bg-gray-700 border-b dark:border-gray-600">
               <tr>
                 <th className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">
+                  #
+                </th>
+                <th className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">
                   {t("subscriptions.pharmacy")}
                 </th>
                 <th className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">
                   {t("subscriptions.plan")}
                 </th>
-                                <th className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">
+                <th className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">
                   {t("subscriptions.status")}
                 </th>
                 <th className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white text-center">
                   {t("subscriptions.nextMonthPaid")}
                 </th>
-                <th className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">
+                                <th className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">
                   {t("subscriptions.messages")}
+                </th>
+                <th className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">
+                  {t("subscriptions.images")}
                 </th>
 
                 <th className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">
@@ -115,11 +120,14 @@ export const PharmacySubscriptionList: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {currentItems.length > 0 ? (
-                currentItems.map((plan) => (
+                currentItems.map((plan, index) => (
                   <tr
                     key={plan.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors"
+                    className="odd:bg-slate-900 odd:text-white even:bg-slate-800 even:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-750 transition-colors"
                   >
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      {(currentPage - 1) * itemsPerPage + index + 1}
+                    </td>
                     <td className="px-6 py-4 text-sm dark:text-gray-300">
                       <div className="font-medium text-gray-900 dark:text-white">
                         {plan.pharmacies?.pharmacy_name}
@@ -130,7 +138,7 @@ export const PharmacySubscriptionList: React.FC = () => {
                         {plan.plans?.name}
                       </span>
                     </td>
-                                        <td className="px-6 py-4">
+                    <td className="px-6 py-4">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           plan.subscription_state === SubscriptionState.ACTIVE
@@ -138,7 +146,9 @@ export const PharmacySubscriptionList: React.FC = () => {
                             : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
                         }`}
                       >
-                        {t(`subscriptions.${plan?.subscription_state.toLowerCase()}`)}
+                        {t(
+                          `subscriptions.${plan?.subscription_state.toLowerCase()}`,
+                        )}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-center">
@@ -149,7 +159,7 @@ export const PharmacySubscriptionList: React.FC = () => {
                         className="rounded text-primary focus:ring-primary h-4 w-4"
                       />
                     </td>
-                    <td className="px-6 py-4">
+                                        <td className="px-6 py-4">
                       <div className="text-sm text-gray-900 dark:text-white">
                         {plan.messages_used || 0} / {plan.plans?.messages_limit}
                       </div>
@@ -162,11 +172,24 @@ export const PharmacySubscriptionList: React.FC = () => {
                         ></div>
                       </div>
                     </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-900 dark:text-white">
+                        {plan.images_used || 0} / {plan.plans?.images_limit}
+                      </div>
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mt-2">
+                        <div
+                          className="bg-primary h-1.5 rounded-full"
+                          style={{
+                            width: `${Math.min(((plan.images_used || 0) / (plan.plans?.images_limit || 1)) * 100, 100)}%`,
+                          }}
+                        ></div>
+                      </div>
+                    </td>
 
                     <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                       {new Date(plan.bill_due).toLocaleDateString()}
                     </td>
-                                        <td className="px-6 py-4 text-center space-x-2 rtl:space-x-reverse">
+                    <td className="px-6 py-4 text-center space-x-2 rtl:space-x-reverse">
                       <button
                         onClick={() => handleRenewBilling(plan)}
                         disabled={plan.state === "CANCELED"}
@@ -175,9 +198,7 @@ export const PharmacySubscriptionList: React.FC = () => {
                         {t("subscriptions.renew")}
                       </button>
                       <button
-                        onClick={() =>
-                          handleToggleState(plan.id, plan.state)
-                        }
+                        onClick={() => handleToggleState(plan.id, plan.state)}
                         disabled={plan.state === "CANCELED"}
                         className={`px-3 py-1 text-xs rounded border transition-colors ${
                           plan.state === SubscriptionState.ACTIVE
@@ -190,13 +211,12 @@ export const PharmacySubscriptionList: React.FC = () => {
                           : t("subscriptions.activate")}
                       </button>
                     </td>
-
                   </tr>
                 ))
               ) : (
-                <tr>
+                                <tr>
                   <td
-                    colSpan={7}
+                    colSpan={9}
                     className="px-6 py-12 text-center text-gray-500 dark:text-gray-400"
                   >
                     {t("subscriptions.noSubscriptions")}

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { subscriptionAPI } from "../../api/subscriptionAPI";
+import { plansAPI } from "../../api/plansAPI";
 import { pharmacyAPI } from "../../api/pharmacyAPI";
 import { useLanguage } from "../../context/LanguageContext";
 import { useToast } from "../../context/ToastContext";
 import { type Pharmacy } from "../../types/pharmacy";
 import { Button } from "../../components/ui/Button";
 import type { AlertColor } from "@mui/material";
-import type {Plan} from "../../types/subscription";
+import type { Plan } from "../../types/plan";
 
 export const NewSubscription: React.FC<{ onSuccess: () => void }> = ({
   onSuccess,
@@ -32,7 +33,7 @@ export const NewSubscription: React.FC<{ onSuccess: () => void }> = ({
       try {
         const [pharmaciesData, plansData] = await Promise.all([
           pharmacyAPI.getPharmacies(),
-          subscriptionAPI.getPlans(),
+          plansAPI.getPlans(),
         ]);
         setPharmacies(pharmaciesData);
         setPlans(plansData);

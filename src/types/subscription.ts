@@ -1,5 +1,5 @@
 import  type {Pharmacy}  from "./pharmacy";
-
+import type {Plan}  from "./plan";
 export const SubscriptionState = {
   ACTIVE: "ACTIVE",
   SUSPENDED: "SUSPENDED",
@@ -10,18 +10,7 @@ export const SubscriptionState = {
 export type PlanState = typeof SubscriptionState[keyof typeof SubscriptionState];
 
 
-export interface Plan {
-  id: number;
-  name: string;
-  messages_limit: number;
-  price: number;
-  common_replies: boolean;
-  prescription_reader: boolean;
-  prescription_reader_100:boolean;
-  order_notification: boolean;
-  basic_dashboard:boolean;
-  advanced_dashboard: boolean;
-}
+
 
 export interface Subscription {
   id: string; // BigInt serialized as string
@@ -33,7 +22,7 @@ export interface Subscription {
   state: PlanState;
   bill_due: string;
   messages_used: number;
-  images_count: number;
+  images_used: number;
   next_month_paid: boolean;
   pharmacies?: Pharmacy;
   plans?: Plan;

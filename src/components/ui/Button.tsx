@@ -23,7 +23,7 @@ export const Button: React.FC<ButtonProps> = ({
     danger: 'bg-red-600 text-white hover:bg-red-700',
   };
 
-  const widthStyle = 'w-full sm:w-3/4 md:w-1/2 lg:w-1/3 mx-auto grid-start-2 grid-end-2'; // Adjusted width for responsiveness
+  const widthStyle = 'w-full sm:w-3/4 md:w-1/2 lg:w-1/4 mx-auto grid-start-2 grid-end-2'; // Adjusted width for responsiveness
 
   const {t} = useLanguage();
 

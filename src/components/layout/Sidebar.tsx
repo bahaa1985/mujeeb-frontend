@@ -66,11 +66,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   };
 
   const badge = getPlanBadge();
-  const usagePercent =
+    const usagePercent =
     plan && plan.plans
       ? Math.min((plan.messages_used / plan.plans.messages_limit) * 100, 100)
       : 0;
   const isLimitReached = usagePercent >= 100;
+
+  const imagesUsagePercent =
+    plan && plan.plans
+      ? Math.min((plan.images_used / plan.plans.images_limit) * 100, 100)
+      : 0;
+  const isImagesLimitReached = imagesUsagePercent >= 100;
 
   const links = [
     { path: "/dashboard", label: t("layout.dashboard") },
@@ -185,7 +191,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 <span
                   className={`text-[10px] font-bold ${isLimitReached ? "text-red-500" : "text-gray-700 dark:text-gray-300"}`}
                 >
-                  {plan.messages_used} / {plan.plans.messages_limit}
+                                    {plan.messages_used} / {plan.plans.messages_limit}
                 </span>
               </div>
               <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 overflow-hidden">
@@ -200,7 +206,32 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   style={{ width: `${usagePercent}%` }}
                 />
               </div>
-              {isLimitReached && (
+
+              {/* Images Usage Indicator */}
+              <div className="flex justify-between items-center mb-1 mt-3">
+                <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">
+                  {t("subscriptions.images")}
+                </span>
+                <span
+                  className={`text-[10px] font-bold ${isImagesLimitReached ? "text-red-500" : "text-gray-700 dark:text-gray-300"}`}
+                >
+                  {plan.images_used} / {plan.plans.images_limit}
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    isImagesLimitReached
+                      ? "bg-red-500"
+                      : imagesUsagePercent > 80
+                        ? "bg-orange-500"
+                        : "bg-primary"
+                  }`}
+                  style={{ width: `${imagesUsagePercent}%` }}
+                />
+              </div>
+
+              {(isLimitReached || isImagesLimitReached) && (
                 <p className="text-[10px] text-red-500 mt-1 font-medium leading-tight">
                   {t("layout.renewSubscription")}
                 </p>

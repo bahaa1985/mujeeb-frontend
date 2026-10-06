@@ -5,5 +5,6 @@ export * from './messagesAPI';
 export * from './inventoryAPI';
 export * from './googleDriveAPI';
 export * from './subscriptionAPI';
+export * from './plansAPI';
 export { default as api } from './axios';
 

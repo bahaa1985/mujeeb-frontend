@@ -73,10 +73,9 @@ export const inventoryAPI = {
   /**
    * Get Inventory for a pharmacy
    */
-  getInventoryCountByPharmacyId:async(pharmacyId:number)=>{
-   if(pharmacyId){const response = await api.get(`/inventory/pharmacy/${pharmacyId}`);
+  getInventoryCountByPharmacyId:async()=>{
+   const response = await api.get('/inventory/pharmacy');
    return response.data
-  }
   },
   /**
    * Delete inventory item

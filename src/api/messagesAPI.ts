@@ -8,14 +8,12 @@ export const messagesAPI = {
     return response.data;
   },
 
-  getMessagesByPharmacy: async (
-    pharmacyId: number,
-  ): Promise<Message[]> => {
+  getMessagesByPharmacy: async (): Promise<Message[]> => {
     // const params = new URLSearchParams();
     // if (contactPhone) params.set('contactPhone', contactPhone);
     // if (pharmacyPhone) params.set('pharmacyPhone', pharmacyPhone);
     // const search = params.toString() ? `?${params.toString()}` : '';
-    const response = await api.get<Message[]>(`/messages/pharmacy/${pharmacyId}`);
+    const response = await api.get<Message[]>('/messages/pharmacy');
     return response.data;
   },
 

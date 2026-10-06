@@ -48,7 +48,7 @@ export const DashboardStats: React.FC = () => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const messages = await messagesAPI.getMessagesByPharmacy(Number(pharmacy?.id));
+        const messages = await messagesAPI.getMessagesByPharmacy();
         if(messages){
           setMessagesCount(messages?.length)
         }
@@ -61,9 +61,7 @@ export const DashboardStats: React.FC = () => {
     };
 const fetchInventory = async () => {
       try {
-        const itemsCount = await inventoryAPI.getInventoryCountByPharmacyId(
-          Number(pharmacy?.id),
-        );
+        const itemsCount = await inventoryAPI.getInventoryCountByPharmacyId();
         if(itemsCount) setInventoryCount(itemsCount) 
         else {setInventoryCount(0)}
       } catch {

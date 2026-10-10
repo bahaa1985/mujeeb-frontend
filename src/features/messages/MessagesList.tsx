@@ -30,6 +30,8 @@ export const MessagesList: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [selectedClient, setSelectedClient] = useState("");
+  const [nextMessageCursor, setNextMessageCursor] = useState<string | null>(null);
+  const [isLoadingOlderMessages, setIsLoadingOlderMessages] = useState(false);
   const [clientSearch, setClientSearch] = useState("");
   const [messageSearch, setMessageSearch] = useState("");
   const [newMessage, setNewMessage] = useState("");
@@ -47,6 +49,7 @@ export const MessagesList: React.FC = () => {
   const [isAiMode] = useState(user?.ai_mode);
 
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
+  const olderMessagesScrollRef = useRef<{ scrollHeight: number; scrollTop: number } | null>(null);
 
   const canViewAllContacts = user?.role_id === 1 || user?.role_id === 2;
   const activePharmacyUser = canViewAllContacts ? selectedPharmacyUser : user;
@@ -82,26 +85,58 @@ export const MessagesList: React.FC = () => {
   }, [activePharmacyUser?.id]);
 
   const loadMessages = useCallback(
-    async (clientPhone?: string) => {
+    async (clientPhone?: string, cursorId?: string) => {
       if (!user || !activePharmacyUser) return;
-      setIsLoading(true);
+      const loadingOlderMessages = Boolean(cursorId);
+      if (loadingOlderMessages) {
+        setIsLoadingOlderMessages(true);
+      } else {
+        setIsLoading(true);
+        setNextMessageCursor(null);
+      }
       setError("");
       try {
-        const data = 
-        canViewAllContacts
-            ? await messagesAPI.getMessagesByPharmacy(
-              // clientPhone,
-              // conversationUserMobile,
-            )
-          : 
-          await messagesAPI.getMessages(conversationUserMobile, clientPhone);
-        if (data) setMessages(data);
+        if (clientPhone) {
+          const result = await messagesAPI.getMessages(conversationUserMobile, clientPhone, {
+            cursorId,
+            limit: 20,
+            ...(Number(user.role_id) === 1
+              ? { pharmacyId: Number(activePharmacyUser.pharmacy_id || user.pharmacy_id) }
+              : {}),
+          });
+          setNextMessageCursor(result.nextCursor);
+          if (cursorId) {
+            if (messageContainerRef.current) {
+              olderMessagesScrollRef.current = {
+                scrollHeight: messageContainerRef.current.scrollHeight,
+                scrollTop: messageContainerRef.current.scrollTop,
+              };
+            }
+            setMessages((currentMessages) => {
+              const messagesById = new Map(currentMessages.map((message) => [message.id, message]));
+              result.data.forEach((message) => messagesById.set(message.id, message));
+              return Array.from(messagesById.values());
+            });
+          } else {
+            setMessages(result.data);
+          }
+        } else if (canViewAllContacts) {
+          setMessages(await messagesAPI.getMessagesByPharmacy());
+          setNextMessageCursor(null);
+        } else {
+          setMessages([]);
+          setNextMessageCursor(null);
+        }
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Failed to load messages",
         );
       } finally {
-        setIsLoading(false);
+        if (loadingOlderMessages) {
+          setIsLoadingOlderMessages(false);
+        } else {
+          setIsLoading(false);
+        }
       }
     },
     [activePharmacyUser, canViewAllContacts, conversationUserMobile, user],
@@ -296,10 +331,17 @@ export const MessagesList: React.FC = () => {
 
   // Scroll to the bottom of the message list when messages change
   useEffect(() => {
-    if (messageContainerRef.current) {
-      messageContainerRef.current.scrollTop =
-        messageContainerRef.current.scrollHeight;
+    const container = messageContainerRef.current;
+    if (!container) return;
+
+    const previousScroll = olderMessagesScrollRef.current;
+    if (previousScroll) {
+      container.scrollTop = previousScroll.scrollTop + (container.scrollHeight - previousScroll.scrollHeight);
+      olderMessagesScrollRef.current = null;
+      return;
     }
+
+    container.scrollTop = container.scrollHeight;
   }, [messages]);
 
   const conversationMessages = useMemo(() => {
@@ -600,6 +642,16 @@ export const MessagesList: React.FC = () => {
             ref={messageContainerRef}
             className="sidebar-scrollbar mt-4 flex min-h-0 max-h-[45dvh] flex-col gap-3 overflow-y-auto overflow-x-hidden rounded-xl border border-gray-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/70 sm:max-h-[calc(100dvh-25rem)] sm:p-4 lg:max-h-screen lg:flex-1"
           >
+            {selectedClient && nextMessageCursor && (
+              <button
+                type="button"
+                onClick={() => void loadMessages(selectedClient, nextMessageCursor)}
+                disabled={isLoadingOlderMessages}
+                className="self-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+              >
+                {isLoadingOlderMessages ? t("common.loading") : t("messages.loadOlder")}
+              </button>
+            )}
             <style>{`
             .sidebar-scrollbar {
               scrollbar-width: thin;

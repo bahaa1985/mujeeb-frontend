@@ -123,6 +123,7 @@
     "messagesTitle": "الرسائل",
     "searchMessages": "بحث في الرسائل",
     "noMessages": "لا توجد رسائل في هذه المحادثة بعد.",
+    "loadOlder": "تحميل الرسائل الأقدم",
     "sendTitle": "إرسال رسالة",
     "placeholder": "اختر عميلًا قبل إرسال رسالة...",
     "sendButton": "إرسال الرسالة",

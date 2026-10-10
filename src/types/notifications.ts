@@ -2,12 +2,12 @@ export interface NotificationPagination {
   total: number;
   page: number;
   limit: number;
-  totalPages: number;
+  lastPage: number;
 }
 
 export interface NotificationsResponse {
-  notifications: AppNotification[];
-  pagination: NotificationPagination;
+  data: AppNotification[];
+  meta: NotificationPagination;
   unreadCount: number;
 }
 

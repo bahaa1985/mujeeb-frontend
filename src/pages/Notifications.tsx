@@ -136,9 +136,9 @@ const NotificationsPage: React.FC = () => {
           )}
         </div>
 
-        {pagination && pagination.totalPages > 1 && (
+        {pagination && pagination.lastPage > 1 && (
           <div className="flex justify-center gap-2 mt-4">
-            {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((p) => (
+            {Array.from({ length: pagination.lastPage }, (_, i) => i + 1).map((p) => (
               <button
                 key={p}
                 onClick={() => handlePageChange(p)}

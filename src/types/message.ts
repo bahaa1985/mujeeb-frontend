@@ -14,6 +14,11 @@ export interface Message {
   confidence?: number | null;
 }
 
+export interface CursorPaginatedMessages {
+  data: Message[];
+  nextCursor: string | null;
+}
+
 export interface CreateMessageDto {
   to_number: string;
   from_number: string;

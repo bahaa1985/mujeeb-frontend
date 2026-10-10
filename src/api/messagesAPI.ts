@@ -1,10 +1,16 @@
 import api from './axios';
-import type { Message, CreateMessageDto } from '../types/message';
+import type { CursorPaginatedMessages, Message, CreateMessageDto } from '../types/message';
 
 export const messagesAPI = {
-  getMessages: async (userNumber: string, contactPhone?: string): Promise<Message[]> => {
-    const search = contactPhone ? `?contactPhone=${encodeURIComponent(contactPhone)}` : '';
-    const response = await api.get<Message[]>(`/messages/user/${userNumber}${search}`);
+  getMessages: async (
+    userNumber: string,
+    contactNumber: string,
+    params: { cursorId?: string; limit?: number; pharmacyId?: number } = {},
+  ): Promise<CursorPaginatedMessages> => {
+    const response = await api.get<CursorPaginatedMessages>(
+      `/messages/user/${encodeURIComponent(userNumber)}`,
+      { params: { contactNumber, limit: 20, ...params } },
+    );
     return response.data;
   },
 

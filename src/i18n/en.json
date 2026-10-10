@@ -123,6 +123,7 @@
     "messagesTitle": "Messages",
     "searchMessages": "Search messages",
     "noMessages": "No messages in this conversation yet.",
+    "loadOlder": "Load older messages",
     "sendTitle": "Send a message",
     "placeholder": "Select a client before sending a message...",
     "sendButton": "Send Message",

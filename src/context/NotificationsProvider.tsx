@@ -29,8 +29,8 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     setError(null);
     try {
       const response = await notificationsAPI.getNotifications(page);
-      setNotifications(response.notifications);
-      setPagination(response.pagination);
+      setNotifications(response.data);
+      setPagination(response.meta);
       setUnreadCount(response.unreadCount);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch notifications');

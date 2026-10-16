@@ -1,4 +1,5 @@
 import React from 'react';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useLanguage } from '../../context/LanguageContext';
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger';
@@ -9,7 +10,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   isLoading = false,
-  // fullWidth = false,
+  fullWidth = false,
   disabled,
   children,
   ...props
@@ -23,7 +24,9 @@ export const Button: React.FC<ButtonProps> = ({
     danger: 'bg-red-600 text-white hover:bg-red-700',
   };
 
-  const widthStyle = 'w-full sm:w-3/4 md:w-1/2 lg:w-1/4 mx-auto grid-start-2 grid-end-2'; // Adjusted width for responsiveness
+  const widthStyle = fullWidth
+    ? 'w-full'
+    : 'w-full sm:w-3/4 md:w-1/2 lg:w-1/4 mx-auto';
 
   const {t} = useLanguage();
 
@@ -34,7 +37,10 @@ export const Button: React.FC<ButtonProps> = ({
         disabled={disabled || isLoading}
         {...props}
       >
-        {isLoading ? t("auth.loging") : children}
+        <span className="inline-flex items-center justify-center gap-2">
+          {isLoading ? <CircularProgress size={18} color="inherit" aria-label={t("auth.loging")} /> : null}
+          {isLoading ? t("auth.loging") : children}
+        </span>
       </button>
     </div>
   );

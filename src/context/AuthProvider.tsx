@@ -1,26 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AuthContext } from './AuthContext';
 import type { User } from '../types/user';
 import { authAPI } from '../api/authAPI';
-import {requestNotificationPermission} from "../utils/firebase-client"
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const authRequestId = useRef(0);
 
   // Check if user is already logged in on mount
   useEffect(() => {
     const checkAuth = async () => {
+      const requestId = ++authRequestId.current;
       try {
         const currentUser = await authAPI.getCurrentUser();
-        console.log("Current user:", currentUser);
-        setUser(currentUser);
+        if (requestId === authRequestId.current) setUser(currentUser);
       } catch {
-        setUser(null);
+        if (requestId === authRequestId.current) setUser(null);
       } finally {
-        setIsLoading(false);
+        if (requestId === authRequestId.current) setIsLoading(false);
       }
     };
 
@@ -28,24 +28,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = async (mobile: string, password: string) => {
+    const requestId = ++authRequestId.current;
     setIsLoading(true);
     try {
-      const response = await authAPI.login({ mobile, password });   
-        await requestNotificationPermission(response.user?.id)
-      setUser(response.user);
+      const response = await authAPI.login({ mobile, password });
+      if (requestId === authRequestId.current) setUser(response.user);
+      if (requestId === authRequestId.current && response.user?.id) {
+        void import("../utils/firebase-client")
+          .then(({ requestNotificationPermission }) => requestNotificationPermission(response.user.id))
+          .catch((error: unknown) => console.error("Failed to initialize push notifications:", error));
+      }
     } finally {
-      setIsLoading(false);
+      if (requestId === authRequestId.current) setIsLoading(false);
     }
   };
 
   const logout = async () => {
+    const requestId = ++authRequestId.current;
     setIsLoading(true);
     try {
       await authAPI.logout();
-      setUser(null);
+      if (requestId === authRequestId.current) setUser(null);
     } finally {
-      setIsLoading(false);
-      window.location.href='/login';
+      if (requestId === authRequestId.current) {
+        setIsLoading(false);
+        window.location.href = '/login';
+      }
     }
   };
 

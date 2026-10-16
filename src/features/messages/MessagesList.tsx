@@ -233,7 +233,7 @@ export const MessagesList: React.FC = () => {
               (newMessageData.message_type === 2 ||
                 newMessageData.message_type === 3) &&
               pharmPlan?.plan_id === 2 &&
-              pharmPlan?.images_count >= 100 // تأكد إن اسم الحقل يطابق الموجود في state عندك
+              pharmPlan?.images_used >= 100 // تأكد إن اسم الحقل يطابق الموجود في state عندك
             ) {
               messagesAPI.createMessage({
                 to_number: conversationUserMobile,

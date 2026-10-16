@@ -49,8 +49,7 @@ export const requestNotificationPermission = async (userId: number) => {
 };
 
 // 3. الاستماع للإشعارات والتطبيق مفتوح (Foreground)
-export const listenForForegroundMessages = () => {
-  onMessage(messaging, (payload) => {
+export const listenForForegroundMessages = () => onMessage(messaging, (payload) => {
     // console.log("Message received in foreground:", payload);
     
     // تشغيل ملف صوتي
@@ -63,5 +62,4 @@ export const listenForForegroundMessages = () => {
       silent:true,
       icon: "/pwa-192.png",
     });
-  });
-};
+});

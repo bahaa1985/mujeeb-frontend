@@ -1,25 +1,30 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
 import { useAuth } from "../context/AuthContext";
 
-// Pages
-import { LoginPage } from "../pages/Login";
-import { DashboardPage } from "../pages/Dashboard";
-import { MessagesPage } from "../pages/Messages";
-import { UsersPage } from "../pages/Users";
-import { UserPage } from "../pages/UserPage";
-import { InventoryPage } from "../pages/Inventory";
-import NotificationsPage from "../pages/Notifications";
-import { PharmacyPage as AdminPharmacyPage } from "../pages/Pharmacy";
+const LoginPage = lazy(() => import("../pages/Login").then((module) => ({ default: module.LoginPage })));
+const DashboardPage = lazy(() => import("../pages/Dashboard").then((module) => ({ default: module.DashboardPage })));
+const MessagesPage = lazy(() => import("../pages/Messages").then((module) => ({ default: module.MessagesPage })));
+const UsersPage = lazy(() => import("../pages/Users").then((module) => ({ default: module.UsersPage })));
+const UserPage = lazy(() => import("../pages/UserPage").then((module) => ({ default: module.UserPage })));
+const InventoryPage = lazy(() => import("../pages/Inventory").then((module) => ({ default: module.InventoryPage })));
+const NotificationsPage = lazy(() => import("../pages/Notifications"));
+const AdminPharmacyPage = lazy(() => import("../pages/Pharmacy").then((module) => ({ default: module.PharmacyPage })));
+const PharmacyPage = lazy(() => import("../pages/PharmacyPage").then((module) => ({ default: module.PharmacyPage })));
+const SubscriptionsPage = lazy(() => import("../pages/Subscriptions").then((module) => ({ default: module.SubscriptionsPage })));
+const NotFoundPage = lazy(() => import("../pages/NotFound").then((module) => ({ default: module.NotFoundPage })));
 
-import { PharmacyPage } from "../pages/PharmacyPage";
-import {SubscriptionsPage} from "../pages/Subscriptions"
-import { NotFoundPage } from "../pages/NotFound";
+const RouteLoading: React.FC = () => (
+  <div className="flex min-h-screen items-center justify-center" role="status" aria-label="Loading">
+    <CircularProgress />
+  </div>
+);
 
 /**
  * Protected route component
@@ -29,16 +34,9 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { user, isLoading } = useAuth();
-  // console.log("user",user);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
+    return <RouteLoading />;
   }
 
   if (!user) {
@@ -53,9 +51,12 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
  * Handles all routing and protected routes
  */
 export const AppRouter: React.FC = () => {
+  const { user } = useAuth();
+
   return (
     <Router>
-      <Routes>
+      <Suspense fallback={<RouteLoading />}>
+        <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
 
@@ -76,8 +77,8 @@ export const AppRouter: React.FC = () => {
             </ProtectedRoute>
           }
         />
-                {useAuth().user?.role_id === 1 && (
-          <Route
+        {user?.role_id === 1 && (
+        <Route
             path="/pharmacies"
             element={
               <ProtectedRoute>
@@ -121,7 +122,6 @@ export const AppRouter: React.FC = () => {
         />
         <Route
           path="/inventory"
-
           element={
             <ProtectedRoute>
               <InventoryPage />
@@ -129,18 +129,19 @@ export const AppRouter: React.FC = () => {
           }
         />
         <Route
-        path="/subscriptions"
-        element={
-          <ProtectedRoute>
-            <SubscriptionsPage/>
-          </ProtectedRoute>
-        }
+          path="/subscriptions"
+          element={
+            <ProtectedRoute>
+              <SubscriptionsPage />
+            </ProtectedRoute>
+          }
         />
 
         {/* Fallback Routes */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+        </Routes>
+      </Suspense>
     </Router>
   );
 };

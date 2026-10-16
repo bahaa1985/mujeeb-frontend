@@ -6,23 +6,26 @@ import { PharmacyProvider } from "./context/PharmacyProvider";
 import { LanguageProvider } from "./context/LanguageProvider";
 import { ThemeProvider } from "./context/ThemeContext";
 import { NotificationsProvider } from "./context/NotificationsProvider";
-import { listenForForegroundMessages } from "./utils/firebase-client";
 import { useAuth } from "./context/AuthContext";
 
 function AppContent() {
-  const { isLoading } = useAuth();
+  const { user } = useAuth();
+  const userId = user?.id;
 
-  if (isLoading) {
-    return (
-      <div
-        className="min-h-screen bg-slate-950 bg-cover bg-center flex items-center justify-center"
-        style={{ backgroundImage: "url('/mujeeb-splashscreen.jfif')" }}
-      >
-        <div className="absolute inset-0 bg-slate-950/35" />
-        <img src="/mujeeb-navbar-ldark.png" alt="Mujeeb" className="relative w-72 max-w-[80vw]" />
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (!userId) return;
+    let active = true;
+    let unsubscribe: (() => void) | undefined;
+
+    void import("./utils/firebase-client").then(({ listenForForegroundMessages }) => {
+      if (active) unsubscribe = listenForForegroundMessages();
+    }).catch((error: unknown) => console.error("Failed to initialize foreground notifications:", error));
+
+    return () => {
+      active = false;
+      unsubscribe?.();
+    };
+  }, [userId]);
 
   return (
     <NotificationsProvider>
@@ -36,9 +39,6 @@ function AppContent() {
 }
 
 function App() {
-  useEffect(()=>{
-    listenForForegroundMessages();
-  },[])
   return (
     <ThemeProvider>
       <ToastProvider>
@@ -51,4 +51,3 @@ function App() {
 }
 
 export default App;
-

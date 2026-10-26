@@ -24,10 +24,12 @@ const NotificationsPage: React.FC = () => {
   }, [markAllAsRead]);
 
   const handleNotificationClick = (notification: AppNotification) => {
-    if (notification.type === 'ORDER_REQUEST') {
-      const contactNumber = notification.data?.fromNumber || notification.data?.from_number;
-      if (contactNumber) {
-        navigate(`/messages?contact=${contactNumber}`);
+    if (notification.type === 'ORDER_REQUEST' || notification.type === 'AMBIGUOUS_MESSAGE') {
+      const contactNumber = notification.data?.contactNumber
+        || notification.data?.fromNumber
+        || notification.data?.from_number;
+      if (typeof contactNumber === 'string' && contactNumber) {
+        navigate(`/messages?contact=${encodeURIComponent(contactNumber)}`);
       } else {
         navigate('/messages');
       }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { PageWrapper } from '../components/layout/PageWrapper';
 import { UploadInventory } from '../features/inventory/UploadInventory';
+import { InventoryManager } from '../features/inventory/InventoryManager';
 import { useLanguage } from '../context/LanguageContext';
 
 export const InventoryPage: React.FC = () => {
@@ -17,6 +18,7 @@ export const InventoryPage: React.FC = () => {
         </div>
         <div className="bg-white dark:bg-slate-900 p-8 rounded-lg shadow-sm border border-gray-200">
           <UploadInventory />
+          <InventoryManager />
         </div>
       </div>
     </PageWrapper>

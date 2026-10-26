@@ -229,21 +229,21 @@ export const MessagesList: React.FC = () => {
             matchesCurrentUser(newMessageData)
           ) {
             // فحص نوع الرسالة وخطة الاشتراك واستهلاك الصور
-            if (
-              (newMessageData.message_type === 2 ||
-                newMessageData.message_type === 3) &&
-              pharmPlan?.plan_id === 2 &&
-              pharmPlan?.images_used >= 100 // تأكد إن اسم الحقل يطابق الموجود في state عندك
-            ) {
-              messagesAPI.createMessage({
-                to_number: conversationUserMobile,
-                message: "You exceeds 100 images",
-                instance_name: instanceName,
-                from_number: conversationUserMobile,
-                image_url: "",
-                                pharmacyId: user?.pharmacy_id || 0,
-              });
-            }
+            // if (
+            //   (newMessageData.message_type === 2 ||
+            //     newMessageData.message_type === 3) &&
+            //   pharmPlan?.plan_id === 2 &&
+            //   pharmPlan?.images_used >= 100 // تأكد إن اسم الحقل يطابق الموجود في state عندك
+            // ) {
+            //   messagesAPI.createMessage({
+            //     to_number: conversationUserMobile,
+            //     message: "You exceeds 100 images",
+            //     instance_name: instanceName,
+            //     from_number: conversationUserMobile,
+            //     image_url: "",
+            //                     pharmacyId: user?.pharmacy_id || 0,
+            //   });
+            // }
 
             // Check if it's an order request (message_type = 10)
             // if (String(newMessageData.message_type) === "10") {

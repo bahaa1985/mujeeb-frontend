@@ -7,6 +7,28 @@ export interface InventoryUploadResponse {
   importedCount?: number;
 }
 
+export interface InventoryItem {
+  id: string;
+  pharmacy_id: number;
+  en_name: string | null;
+  ar_name: string | null;
+  price: number | null;
+  units_count: number | null;
+  dosage_form: string | null;
+  drug_type: string | null;
+  active_material: string | null;
+  quantity: number | null;
+}
+
+export interface InventoryPage {
+  data: InventoryItem[];
+  meta: { total: number; page: number; limit: number; lastPage: number };
+}
+
+export type InventoryUpdate = Omit<InventoryItem, 'id' | 'pharmacy_id' | 'quantity'> & {
+  quantity: 0 | 1;
+};
+
 export interface DrugCardEntry {
   a_name?: string;
   e_name?: string;
@@ -64,9 +86,21 @@ export const inventoryAPI = {
   getInventory: async (params?: {
     page?: number;
     limit?: number;
-    search?: string;
-  }) => {
-    const response = await api.get('/inventory', { params });
+    search: string;
+    stock?: 'all' | 'in' | 'out';
+  }): Promise<InventoryPage> => {
+    const response = await api.get<InventoryPage>('/inventory', { params });
+    return response.data;
+  },
+
+  /**
+   * Update an inventory item without changing its id or pharmacy.
+   */
+  updateInventory: async (id: string, data: InventoryUpdate) => {
+    const response = await api.patch<{ success: boolean; message: string; data: InventoryItem }>(
+      `/inventory/update/${encodeURIComponent(id)}`,
+      data,
+    );
     return response.data;
   },
 
